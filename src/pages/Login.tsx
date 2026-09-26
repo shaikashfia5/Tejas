@@ -63,6 +63,10 @@ export const Login: React.FC = () => {
           <p className="text-sm text-slate-400 font-medium max-w-xs mx-auto">
             {t('app.tagline')}
           </p>
+          <p className="text-[11px] text-blue-300/90 font-medium max-w-xs mx-auto">
+            Tejas Field — the tool your Bank Sakhi / Business Correspondent
+            uses with you, at the doorstep.
+          </p>
         </div>
 
         {/* Email / Password Form */}
@@ -155,8 +159,9 @@ export const Login: React.FC = () => {
         </div>
 
         <p className="text-center text-[11px] text-slate-500 max-w-xs mx-auto leading-relaxed">
-          Your data is protected: only you can see your evidence, income and
-          obligations. Share briefs only through links you explicitly create.
+          Your data is protected: only you and your assisted BC session can see
+          your evidence. Briefs are shared only through links you explicitly
+          create. Program administrators use a separate Tejas Command console.
         </p>
       </div>
     </div>

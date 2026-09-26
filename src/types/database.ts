@@ -36,6 +36,8 @@ export interface Profile {
   income_type: IncomeType;
   goal: GoalType;
   onboarded: boolean;
+  /** Tejas role: field agents use Tejas Field; admins get Tejas Command. */
+  role?: 'field_agent' | 'admin';
   created_at: string;
 }
 

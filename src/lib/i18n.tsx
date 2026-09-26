@@ -6,7 +6,7 @@ const locales: Record<string, Record<string, string>> = {
   en: {
     // App
     'app.name': 'Tejas',
-    'app.tagline': 'Your Financial Continuity Passport',
+    'app.tagline': 'Financial Continuity Passport — built with your Bank Sakhi / BC',
     'app.offline': 'You are offline. Entries will sync when connected.',
 
     // Nav
@@ -135,7 +135,7 @@ const locales: Record<string, Record<string, string>> = {
 
     // Passport
     'passport.title': 'Financial Passport',
-    'passport.subtitle': 'Your complete financial continuity profile',
+    'passport.subtitle': 'The evidence-backed activation record your Bank Sakhi / BC builds with you',
     'passport.income_pattern': 'Income Pattern',
     'passport.obligation_map': 'Obligation Map',
     'passport.resilience': 'Resilience Buffer',
@@ -192,7 +192,7 @@ const locales: Record<string, Record<string, string>> = {
   hi: {
     // App
     'app.name': 'तेजस',
-    'app.tagline': 'आपका वित्तीय निरंतरता पासपोर्ट',
+    'app.tagline': 'वित्तीय निरंतरता पासपोर्ट — आपकी बैंक सखी / BC के साथ',
     'app.offline': 'आप ऑफलाइन हैं। कनेक्ट होने पर एंट्री सिंक होंगी।',
 
     // Nav
@@ -321,7 +321,7 @@ const locales: Record<string, Record<string, string>> = {
 
     // Passport
     'passport.title': 'वित्तीय पासपोर्ट',
-    'passport.subtitle': 'आपकी पूरी वित्तीय निरंतरता प्रोफाइल',
+    'passport.subtitle': 'आपकी बैंक सखी / BC के साथ बनाया गया प्रमाण-आधारित रिकॉर्ड',
     'passport.income_pattern': 'आय पैटर्न',
     'passport.obligation_map': 'दायित्व मैप',
     'passport.resilience': 'सहनशक्ति बफर',

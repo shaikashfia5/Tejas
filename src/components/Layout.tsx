@@ -9,6 +9,10 @@ import {
   LogOut,
   WifiOff,
   User,
+  LayoutDashboard,
+  MapPin,
+  ClipboardList,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useI18n } from '../lib/i18n';
@@ -20,6 +24,7 @@ export const Layout: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const isAdmin = profile?.role === 'admin';
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -37,13 +42,24 @@ export const Layout: React.FC = () => {
     navigate('/login');
   };
 
-  const navItems = [
-    { to: '/evidence', label: t('nav.evidence'), icon: FolderLock },
-    { to: '/cashflow', label: t('nav.cashflow'), icon: TrendingUp },
-    { to: '/shock', label: t('nav.shock'), icon: Zap },
-    { to: '/passport', label: t('nav.passport'), icon: Award },
-    { to: '/share', label: t('nav.share'), icon: Share2 },
-  ];
+  // Two separate toolbars: Tejas Command (admins) and Tejas Field (agents).
+  // The separation IS the architecture story — never merge them.
+  const navItems = isAdmin
+    ? [
+        { to: '/command', label: 'Overview', icon: LayoutDashboard, end: true },
+        { to: '/command/segments', label: 'Segments', icon: MapPin, end: false },
+        { to: '/command/outreach', label: 'Outreach', icon: ClipboardList, end: false },
+        { to: '/command/governance', label: 'Governance', icon: ShieldCheck, end: false },
+      ]
+    : [
+        { to: '/evidence', label: t('nav.evidence'), icon: FolderLock, end: false },
+        { to: '/cashflow', label: t('nav.cashflow'), icon: TrendingUp, end: false },
+        { to: '/shock', label: t('nav.shock'), icon: Zap, end: false },
+        { to: '/passport', label: t('nav.passport'), icon: Award, end: false },
+        { to: '/share', label: t('nav.share'), icon: Share2, end: false },
+      ];
+
+  const contentWidth = isAdmin ? 'max-w-5xl' : 'max-w-lg';
 
   return (
     <div className="min-h-screen bg-navy-900 text-white flex flex-col selection:bg-amber-500 selection:text-navy-900">
@@ -57,27 +73,39 @@ export const Layout: React.FC = () => {
 
       {/* Top Header */}
       <header className="sticky top-0 z-40 bg-navy-950/80 backdrop-blur-xl border-b border-white/10 px-4 py-3">
-        <div className="max-w-lg mx-auto flex items-center justify-between">
+        <div className={`${contentWidth} mx-auto flex items-center justify-between`}>
           {/* Logo & Tag */}
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center font-black text-navy-950 shadow-md">
               ⚡
             </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-amber-400 to-amber-200 bg-clip-text text-transparent">
-                  Tejas
+            <div className="flex items-center gap-1.5">
+              <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-amber-400 to-amber-200 bg-clip-text text-transparent">
+                Tejas
+              </span>
+              {isAdmin ? (
+                <span className="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                  Command
                 </span>
+              ) : (
                 <span className="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
                   Passport
                 </span>
-              </div>
+              )}
+              {isAdmin && (
+                <span
+                  className="text-[10px] uppercase font-bold tracking-widest px-1.5 py-0.5 rounded bg-slate-700/60 text-slate-300 border border-white/10"
+                  title="Synthetic data for demonstration — not sourced from PMJDY, DBT Mission, RBI FI-Index, or NPCI"
+                >
+                  Demo Data
+                </span>
+              )}
             </div>
           </div>
 
           {/* Right Header Controls */}
           <div className="flex items-center gap-2">
-            <LanguageSelector />
+            {!isAdmin && <LanguageSelector />}
 
             {user && (
               <div className="flex items-center gap-1.5">
@@ -85,7 +113,7 @@ export const Layout: React.FC = () => {
                   className="p-2 rounded-xl bg-slate-800 border border-white/10 text-slate-300 flex items-center gap-1.5"
                   title={user.email || profile?.full_name || 'User'}
                 >
-                  <User size={16} className="text-amber-400" />
+                  <User size={16} className={isAdmin ? 'text-blue-400' : 'text-amber-400'} />
                   <span className="text-xs font-medium max-w-[70px] truncate hidden sm:inline">
                     {profile?.full_name?.split(' ')[0] || 'User'}
                   </span>
@@ -106,16 +134,18 @@ export const Layout: React.FC = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-lg mx-auto pb-24">
+      <main className={`flex-1 w-full ${contentWidth} mx-auto pb-24 px-4`}>
         <Outlet />
       </main>
 
       {/* Bottom Navigation Bar (Mobile-first app shell) */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 bg-navy-950/95 backdrop-blur-xl border-t border-white/10 px-2 py-1.5">
-        <div className="max-w-lg mx-auto flex items-center justify-around">
+        <div className={`${contentWidth} mx-auto flex items-center justify-around`}>
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = location.pathname.startsWith(item.to);
+            const isActive = item.end
+              ? location.pathname === item.to
+              : location.pathname.startsWith(item.to);
 
             return (
               <NavLink

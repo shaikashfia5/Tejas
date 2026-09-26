@@ -11,6 +11,18 @@ import { Passport } from './pages/Passport';
 import { ShareBrief } from './pages/ShareBrief';
 import { MyShares } from './pages/MyShares';
 import { PublicBrief } from './pages/PublicBrief';
+import { AdminProtectedRoute } from './components/AdminRoute';
+import { CommandOverview } from './pages/command/CommandOverview';
+import { SegmentsList } from './pages/command/SegmentsList';
+import { SegmentDetail } from './pages/command/SegmentDetail';
+import { OutreachLogPage } from './pages/command/OutreachLogPage';
+import { GovernancePanel } from './pages/command/GovernancePanel';
+
+/** Role-aware landing: admins open Tejas Command, agents open Tejas Field. */
+const RoleRedirect: React.FC = () => {
+  const { profile } = useAuth();
+  return <Navigate to={profile?.role === 'admin' ? '/command' : '/passport'} replace />;
+};
 
 // Protected Route Guard with onboarding redirect
 const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
@@ -28,8 +40,14 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }
     return <Navigate to="/login" replace />;
   }
 
-  // Redirect to onboarding if not completed (except when already there)
-  if (profile && !profile.onboarded && window.location.pathname !== '/onboarding') {
+  // Redirect to onboarding if not completed (except when already there).
+  // Admins skip field onboarding — they use Tejas Command, not the field app.
+  if (
+    profile &&
+    !profile.onboarded &&
+    profile.role !== 'admin' &&
+    window.location.pathname !== '/onboarding'
+  ) {
     return <Navigate to="/onboarding" replace />;
   }
 
@@ -55,7 +73,7 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Navigate to="/passport" replace />} />
+          <Route index element={<RoleRedirect />} />
           <Route path="onboarding" element={<Onboarding />} />
           <Route path="evidence" element={<EvidenceLocker />} />
           <Route path="cashflow" element={<CashFlowMap />} />
@@ -65,8 +83,19 @@ export default function App() {
           <Route path="my-shares" element={<MyShares />} />
         </Route>
 
-        {/* Fallback - redirect to login if not authed, else passport */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* ─── Tejas Command (admin only, same shell, wider content) ─── */}
+        <Route element={<AdminProtectedRoute />}>
+          <Route path="/command" element={<Layout />}>
+            <Route index element={<CommandOverview />} />
+            <Route path="segments" element={<SegmentsList />} />
+            <Route path="segments/:id" element={<SegmentDetail />} />
+            <Route path="outreach" element={<OutreachLogPage />} />
+            <Route path="governance" element={<GovernancePanel />} />
+          </Route>
+        </Route>
+
+        {/* Fallback - redirect to login if not authed, else role home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AuthProvider>
   );

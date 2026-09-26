@@ -63,6 +63,9 @@ export const Passport: React.FC = () => {
             <p className="text-xs text-slate-300 mt-0.5">
               Sector: <span className="font-semibold text-amber-300 capitalize">{profile?.income_type || 'Seasonal'}</span> • Goal: <span className="font-semibold text-amber-300 capitalize">{profile?.goal?.replace('_', ' ') || 'Working Capital'}</span>
             </p>
+            <p className="text-[11px] text-blue-300/90 mt-0.5">
+              Tejas Field · evidence-backed activation record built by your Bank Sakhi / BC, with you
+            </p>
           </div>
 
           <button
