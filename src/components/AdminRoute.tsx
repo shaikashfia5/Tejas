@@ -2,17 +2,14 @@ import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { ShieldAlert } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { PageSkeleton } from './Skeletons';
 
 /** Renders children only for admins; field agents get a clear explanation. */
 export const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { profile, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-navy-900 flex items-center justify-center">
-        <div className="spinner" />
-      </div>
-    );
+    return <PageSkeleton />;
   }
 
   if (profile?.role !== 'admin') {
@@ -39,11 +36,7 @@ export const AdminProtectedRoute: React.FC = () => {
   const { user, profile, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-navy-900 flex items-center justify-center">
-        <div className="spinner" />
-      </div>
-    );
+    return <PageSkeleton />;
   }
   if (!user) return <Navigate to="/login" replace />;
   if (profile && profile.role !== 'admin') {

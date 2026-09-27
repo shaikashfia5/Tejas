@@ -69,7 +69,7 @@
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3.5
            rounded-xl font-semibold text-navy-900
-           transition-all duration-300 active:scale-95;
+           transition-all duration-300 active:scale-[0.97];
     background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
     box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
     min-height: 48px; /* Accessibility: large tap target */
@@ -89,7 +89,7 @@
     @apply inline-flex items-center justify-center gap-2 px-6 py-3.5
            rounded-xl font-semibold text-white
            border border-white/20 bg-white/5
-           transition-all duration-300 active:scale-95;
+           transition-all duration-300 active:scale-[0.97];
     min-height: 48px;
     backdrop-filter: blur(10px);
   }
@@ -101,7 +101,7 @@
   .btn-danger {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3.5
            rounded-xl font-semibold text-white
-           transition-all duration-300 active:scale-95;
+           transition-all duration-300 active:scale-[0.97];
     background: linear-gradient(135deg, #ef4444, #dc2626);
     box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
     min-height: 48px;
@@ -214,6 +214,92 @@
   @keyframes slideDown {
     from { transform: translateY(-100%); }
     to { transform: translateY(0); }
+  }
+
+  /* ── UI polish primitives (subtle & purposeful only) ── */
+
+  /* Page transitions: fade + slight slide (200ms) */
+  .animate-page-enter {
+    animation: page-enter 0.2s ease-out;
+  }
+  @keyframes page-enter {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Real definition for the fade-in already referenced across pages */
+  .animate-fade-in {
+    animation: fade-in 0.2s ease-out;
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.2s ease-out;
+  }
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Skeleton shimmer — banking-style loading states */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 0.5rem;
+  }
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+    animation: shimmer 1.6s infinite;
+  }
+  @keyframes shimmer {
+    to { transform: translateX(100%); }
+  }
+
+  /* Critical-badge pulse — ONLY for rose/critical states */
+  .badge-critical {
+    animation: critical-pulse 2s ease-in-out infinite;
+  }
+  @keyframes critical-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+
+  /* Priority score bars fill from 0 on load (500ms ease-out) */
+  .score-bar {
+    height: 4px;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: inherit;
+    animation: score-fill 0.5s ease-out;
+  }
+  @keyframes score-fill {
+    from { width: 0; }
+  }
+
+  /* Respect reduced-motion: auxiliary animation off */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-page-enter,
+    .animate-fade-in,
+    .animate-scale-in,
+    .badge-critical,
+    .score-bar-fill {
+      animation: none;
+    }
+    .skeleton::after {
+      animation: none;
+    }
   }
 }
 

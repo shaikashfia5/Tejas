@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { useCommand } from '../../hooks/useCommand';
 import { scoreTier } from '../../lib/commandEngine';
+import { CountUp } from '../../components/CountUp';
+import { StatsSkeleton, ListSkeleton } from '../../components/Skeletons';
 import type { RankedSegment } from '../../types/command';
 
 const tierStyles = {
@@ -20,6 +22,7 @@ const tierStyles = {
 } as const;
 
 const tierLabel = { high: 'High', medium: 'Medium', low: 'Low' } as const;
+const tierFill = { high: 'bg-rose-500', medium: 'bg-amber-500', low: 'bg-emerald-500' } as const;
 
 function StatCard({
   icon: Icon,
@@ -29,7 +32,7 @@ function StatCard({
 }: {
   icon: React.ElementType;
   label: string;
-  value: string;
+  value: React.ReactNode;
   tone: string;
 }) {
   return (
@@ -72,6 +75,13 @@ function SegmentRow({ item, rank }: { item: RankedSegment; rank: number }) {
             Gap <b className="text-white">{item.accessUsageGap.toFixed(1)} pt</b>
           </span>
         </div>
+        {/* Live-computed ranking bar — fills from 0 on load */}
+        <div className="score-bar mt-2">
+          <div
+            className={`score-bar-fill ${tierFill[tier]}`}
+            style={{ width: `${Math.min(100, item.score)}%` }}
+          />
+        </div>
       </div>
       <div className="flex flex-col items-end gap-1 shrink-0">
         <span
@@ -79,7 +89,9 @@ function SegmentRow({ item, rank }: { item: RankedSegment; rank: number }) {
         >
           {tierLabel[tier]}
         </span>
-        <span className="text-lg font-black text-white">{item.score.toFixed(1)}</span>
+        <span className="text-lg font-black text-white">
+          <CountUp value={item.score} decimals={1} />
+        </span>
       </div>
       <ChevronRight size={16} className="text-slate-500 shrink-0" />
     </Link>
@@ -91,8 +103,9 @@ export const CommandOverview: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="py-16 flex justify-center">
-        <div className="spinner" />
+      <div className="space-y-5 py-4">
+        <StatsSkeleton />
+        <ListSkeleton rows={6} />
       </div>
     );
   }
@@ -114,10 +127,10 @@ export const CommandOverview: React.FC = () => {
 
       {/* Summary stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard icon={MapPin} label="Segments tracked" value={String(summary.totalSegments)} tone="text-blue-400" />
-        <StatCard icon={UserX} label="Dormant accounts" value={summary.totalDormant.toLocaleString('en-IN')} tone="text-rose-400" />
-        <StatCard icon={Unlink} label="Access-usage gap" value={`${summary.avgAccessUsageGap.toFixed(1)} pt`} tone="text-amber-400" />
-        <StatCard icon={CheckCircle2} label="Activated this month" value={String(summary.activatedThisMonth)} tone="text-emerald-400" />
+        <StatCard icon={MapPin} label="Segments tracked" value={<CountUp value={summary.totalSegments} />} tone="text-blue-400" />
+        <StatCard icon={UserX} label="Dormant accounts" value={<CountUp value={summary.totalDormant} />} tone="text-rose-400" />
+        <StatCard icon={Unlink} label="Access-usage gap" value={<CountUp value={summary.avgAccessUsageGap} decimals={1} suffix=" pt" />} tone="text-amber-400" />
+        <StatCard icon={CheckCircle2} label="Activated this month" value={<CountUp value={summary.activatedThisMonth} />} tone="text-emerald-400" />
       </div>
 
       {/* Methodology note (explainability) */}

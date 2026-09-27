@@ -12,7 +12,7 @@ interface PassportCardProps {
   proofStrength?: ProofStrength;
   sourceEvidence?: EvidenceRecord[];
   badgeText?: string;
-  badgeColor?: 'emerald' | 'amber' | 'blue' | 'indigo';
+  badgeColor?: 'emerald' | 'amber' | 'blue' | 'indigo' | 'rose';
 }
 
 export const PassportCard: React.FC<PassportCardProps> = ({
@@ -32,6 +32,8 @@ export const PassportCard: React.FC<PassportCardProps> = ({
     amber: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
     blue: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
     indigo: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30',
+    // rose = critical state: gets the subtle attention pulse
+    rose: 'badge-critical bg-rose-500/15 text-rose-400 border-rose-500/30',
   }[badgeColor];
 
   return (

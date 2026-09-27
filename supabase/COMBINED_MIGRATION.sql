@@ -1,5 +1,7 @@
 -- Tejas COMBINED Migration: 001 + 002 + 003 (security-hardened)
--- Run this ONE file in Supabase SQL Editor
+-- Run this ONE file in Supabase SQL Editor, THEN also run:
+--   supabase/migrations/004_command.sql  (Tejas Command tables + role + seed)
+--   supabase/migrations/005_maintenance.sql  (pg_cron brief purge)
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. PROFILES

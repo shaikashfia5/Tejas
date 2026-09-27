@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Search, ChevronRight, MapPin } from 'lucide-react';
 import { useCommand } from '../../hooks/useCommand';
 import { scoreTier } from '../../lib/commandEngine';
+import { CountUp } from '../../components/CountUp';
+import { ListSkeleton } from '../../components/Skeletons';
 import type { RankedSegment } from '../../types/command';
 
 const tierStyles = {
@@ -12,6 +14,7 @@ const tierStyles = {
 } as const;
 
 const tierLabel = { high: 'High', medium: 'Medium', low: 'Low' } as const;
+const tierFill = { high: 'bg-rose-500', medium: 'bg-amber-500', low: 'bg-emerald-500' } as const;
 
 type TierFilter = 'all' | 'high' | 'medium' | 'low';
 
@@ -31,6 +34,13 @@ function Row({ item }: { item: RankedSegment }) {
           </span>
         </div>
         <p className="text-[11px] text-slate-400 mt-0.5 truncate">{item.recommendedAction}</p>
+        {/* Live-computed ranking bar — fills from 0 on load */}
+        <div className="score-bar mt-2">
+          <div
+            className={`score-bar-fill ${tierFill[tier]}`}
+            style={{ width: `${Math.min(100, item.score)}%` }}
+          />
+        </div>
       </div>
       <span
         className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border shrink-0 ${tierStyles[tier]}`}
@@ -38,7 +48,7 @@ function Row({ item }: { item: RankedSegment }) {
         {tierLabel[tier]}
       </span>
       <span className="text-base font-black text-white w-12 text-right shrink-0">
-        {item.score.toFixed(1)}
+        <CountUp value={item.score} decimals={1} />
       </span>
       <ChevronRight size={16} className="text-slate-500 shrink-0" />
     </Link>
@@ -52,8 +62,8 @@ export const SegmentsList: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="py-16 flex justify-center">
-        <div className="spinner" />
+      <div className="space-y-4 py-4">
+        <ListSkeleton rows={6} />
       </div>
     );
   }

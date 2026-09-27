@@ -17,6 +17,7 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import { useI18n } from '../lib/i18n';
 import { LanguageSelector } from './LanguageSelector';
+import { PageTransition } from './PageTransition';
 
 export const Layout: React.FC = () => {
   const { user, profile, logout } = useAuth();
@@ -133,9 +134,11 @@ export const Layout: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Content Area */}
+      {/* Main Content Area — subtle fade+slide on every route change */}
       <main className={`flex-1 w-full ${contentWidth} mx-auto pb-24 px-4`}>
-        <Outlet />
+        <PageTransition>
+          <Outlet />
+        </PageTransition>
       </main>
 
       {/* Bottom Navigation Bar (Mobile-first app shell) */}

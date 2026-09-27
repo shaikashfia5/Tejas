@@ -15,6 +15,7 @@ import {
 import { fetchPublicBrief } from '../hooks/useBriefs';
 import { ProvenanceBar } from '../components/ProvenanceBar';
 import { downloadBriefPdf } from '../lib/pdfGenerator';
+import { PageSkeleton } from '../components/Skeletons';
 import type { Brief } from '../types/database';
 
 export const PublicBrief: React.FC = () => {
@@ -56,11 +57,7 @@ export const PublicBrief: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-navy-900 text-white flex items-center justify-center p-4">
-        <div className="spinner" />
-      </div>
-    );
+    return <PageSkeleton />;
   }
 
   if (errorStatus || !brief) {

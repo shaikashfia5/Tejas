@@ -24,6 +24,7 @@ import {
 } from '../lib/computations';
 import { PassportCard } from '../components/PassportCard';
 import { ProvenanceBadge } from '../components/ProvenanceBadge';
+import { CountUp } from '../components/CountUp';
 
 export const Passport: React.FC = () => {
   const { profile } = useAuth();
@@ -87,9 +88,10 @@ export const Passport: React.FC = () => {
           subtitle="Days of operational & essential runway"
           value={
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-emerald-400">
-                {buffer.value}
-              </span>
+              <CountUp
+                value={buffer.value}
+                className="text-3xl font-black text-emerald-400"
+              />
               <span className="text-sm font-semibold text-slate-300">
                 {t('passport.days')}
               </span>
@@ -97,7 +99,7 @@ export const Passport: React.FC = () => {
           }
           icon={ShieldCheck}
           badgeText={buffer.value > 30 ? 'Strong' : buffer.value > 7 ? 'Moderate' : 'Critical'}
-          badgeColor={buffer.value > 30 ? 'emerald' : buffer.value > 7 ? 'amber' : 'amber'}
+          badgeColor={buffer.value > 30 ? 'emerald' : buffer.value > 7 ? 'amber' : 'rose'}
           proofStrength={proof.value}
           sourceEvidence={evidence}
         />

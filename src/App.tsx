@@ -12,6 +12,7 @@ import { ShareBrief } from './pages/ShareBrief';
 import { MyShares } from './pages/MyShares';
 import { PublicBrief } from './pages/PublicBrief';
 import { AdminProtectedRoute } from './components/AdminRoute';
+import { PageSkeleton } from './components/Skeletons';
 import { CommandOverview } from './pages/command/CommandOverview';
 import { SegmentsList } from './pages/command/SegmentsList';
 import { SegmentDetail } from './pages/command/SegmentDetail';
@@ -29,11 +30,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }
   const { user, profile, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-navy-900 flex items-center justify-center">
-        <div className="spinner" />
-      </div>
-    );
+    return <PageSkeleton />;
   }
 
   if (!user) {
