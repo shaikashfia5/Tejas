@@ -2,6 +2,9 @@
 -- Run this ONE file in Supabase SQL Editor, THEN also run:
 --   supabase/migrations/004_command.sql  (Tejas Command tables + role + seed)
 --   supabase/migrations/005_maintenance.sql  (pg_cron brief purge)
+--   supabase/migrations/006_demo_seed.sql  (demo accounts for judges/reviewers
+--     — creates demo.field@ / demo.admin@ auth users, password TejasDemo2026!,
+--     seeds evidence + one shock scenario so the demo Passport is populated)
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. PROFILES

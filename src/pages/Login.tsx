@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, UserCheck, AlertCircle } from 'lucide-react';
+import {
+  ArrowRight,
+  UserCheck,
+  AlertCircle,
+  Sparkles,
+  Smartphone,
+  BarChart3,
+} from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useI18n } from '../lib/i18n';
 import { LanguageSelector } from '../components/LanguageSelector';
+
+/** Hardcoded, clearly-labeled demo accounts (see supabase/migrations/006_demo_seed.sql). */
+const DEMO_PASSWORD = 'TejasDemo2026!';
+const DEMO_FIELD_EMAIL = 'demo.field@tejas.app';
+const DEMO_ADMIN_EMAIL = 'demo.admin@tejas.app';
 
 export const Login: React.FC = () => {
   const { login, signUp } = useAuth();
@@ -16,6 +28,7 @@ export const Login: React.FC = () => {
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState<'field' | 'admin' | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +55,27 @@ export const Login: React.FC = () => {
       }
       navigate('/passport');
     }
+  };
+
+  /**
+   * Demo shortcut for judges/reviewers: sign in with a pre-seeded account and
+   * let the app's normal role-aware redirect take over (admin → /command,
+   * field agent → /passport — see App.tsx RoleRedirect).
+   */
+  const handleDemoLogin = async (role: 'field' | 'admin') => {
+    setError(null);
+    setDemoLoading(role);
+    const res = await login(role === 'field' ? DEMO_FIELD_EMAIL : DEMO_ADMIN_EMAIL, DEMO_PASSWORD);
+    setDemoLoading(null);
+    if (res.error) {
+      setError(
+        res.error.toLowerCase().includes('invalid login')
+          ? 'Demo accounts are not set up on this backend yet. Ask the team to run supabase/migrations/006_demo_seed.sql first.'
+          : res.error
+      );
+      return;
+    }
+    navigate(role === 'admin' ? '/command' : '/passport');
   };
 
   return (
@@ -130,7 +164,7 @@ export const Login: React.FC = () => {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || demoLoading !== null}
               className="btn-primary w-full mt-2"
             >
               {loading ? (
@@ -154,6 +188,54 @@ export const Login: React.FC = () => {
               <span className="underline font-bold">
                 {isSignUp ? t('auth.login') : t('auth.signup')}
               </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Try the Demo — judge/reviewer shortcut (intentional, clearly labeled) */}
+        <div className="glass-card p-5 border-dashed border-white/15 space-y-3">
+          <div className="flex items-center gap-2">
+            <Sparkles size={14} className="text-amber-400 shrink-0" />
+            <p className="text-xs font-semibold tracking-wide text-slate-300">
+              Judges/reviewers — skip sign-up:
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button
+              type="button"
+              disabled={loading || demoLoading !== null}
+              onClick={() => handleDemoLogin('field')}
+              className="btn-secondary !px-4 flex-col !gap-1 !py-3 min-h-0"
+            >
+              {demoLoading === 'field' ? (
+                <div className="spinner" />
+              ) : (
+                <>
+                  <Smartphone size={18} className="text-blue-300" />
+                  <span className="text-sm">View as Field Agent</span>
+                  <span className="text-[10px] font-normal text-slate-400">
+                    Passport with live evidence
+                  </span>
+                </>
+              )}
+            </button>
+            <button
+              type="button"
+              disabled={loading || demoLoading !== null}
+              onClick={() => handleDemoLogin('admin')}
+              className="btn-secondary !px-4 flex-col !gap-1 !py-3 min-h-0"
+            >
+              {demoLoading === 'admin' ? (
+                <div className="spinner" />
+              ) : (
+                <>
+                  <BarChart3 size={18} className="text-amber-300" />
+                  <span className="text-sm">View as Command Admin</span>
+                  <span className="text-[10px] font-normal text-slate-400">
+                    Tejas Command targeting
+                  </span>
+                </>
+              )}
             </button>
           </div>
         </div>
